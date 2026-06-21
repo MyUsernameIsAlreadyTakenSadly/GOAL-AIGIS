@@ -7,65 +7,35 @@ import urllib.parse
 import time
 from bs4 import BeautifulSoup
 import re
+from groq import Groq  # Add this import
 
 # ============ AI CONFIGURATION ============
 def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: str = "mixtral-8x7b-32768") -> str | None:
-    """Get response from Groq API with retry logic"""
+    """Get response from Groq API using the official SDK"""
     if not api_key or not api_key.startswith("gsk_"):
         st.error("Invalid Groq API key. Please enter a valid key starting with 'gsk_'")
         return None
     
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        "temperature": 0.2,
-        "max_tokens": 1500
-    }
-    
-    max_retries = 8
-    base_wait = 2
-    
-    for attempt in range(max_retries):
-        try:
-            resp = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers=headers,
-                json=payload,
-                timeout=75
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            return data["choices"][0]["message"]["content"]
-        except requests.exceptions.HTTPError as e:
-            if resp.status_code == 401:
-                st.error("Invalid Groq API key. Please check your key in the sidebar.")
-                return None
-            elif resp.status_code == 429:
-                if attempt < max_retries - 1:
-                    wait = base_wait * (2 ** attempt)
-                    st.warning(f"Rate limit reached. Retrying in {wait}s... (Attempt {attempt + 1}/{max_retries})")
-                    time.sleep(wait)
-                    continue
-                else:
-                    st.error("Rate limit exceeded. Please try again later.")
-                    return None
-            else:
-                st.error(f"API error: {e}")
-                return None
-        except requests.exceptions.Timeout:
-            st.error("Request timed out. Please try again.")
-            return None
-        except Exception as e:
-            st.error(f"Connection error: {e}")
-            return None
-    return None
+    try:
+        # Initialize Groq client
+        client = Groq(api_key=api_key)
+        
+        # Make the API call
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            model=model,
+            temperature=0.2,
+            max_tokens=1500
+        )
+        
+        return chat_completion.choices[0].message.content
+        
+    except Exception as e:
+        st.error(f"API error: {str(e)}")
+        return None
 
 # ============ WEB SEARCH ============
 UAE_DOMAINS = [
