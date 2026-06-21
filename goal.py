@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 import re
 from groq import Groq
 
-# ============ AI CONFIGURATION ============
 def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: str = "openai/gpt-oss-120b") -> str | None:
     """Get response from Groq API using the official SDK"""
     if not api_key or not api_key.startswith("gsk_"):
@@ -17,7 +16,7 @@ def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: s
         return None
     
     try:
-        # Initialize Groq client
+        # Initialize groq
         client = Groq(api_key=api_key)
         
         # Make the API call
@@ -37,7 +36,7 @@ def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: s
         st.error(f"API error: {str(e)}")
         return None
 
-# ============ WEB SEARCH ============
+# search web
 UAE_DOMAINS = [
     "uae.gov.ae", "moccae.gov.ae", "moi.gov.ae", "mohap.gov.ae",
     "dm.gov.ae", "adpolice.gov.ae", "dubai.gov.ae", "shj.gov.ae",
@@ -80,7 +79,7 @@ def search_uae_content(query: str, max_results: int = 6) -> list[str]:
     except Exception as e:
         return []
 
-# ============ UAE DATA ============
+# hardcoded uae data
 EMIRATES = {
     "Abu Dhabi": {
         "capital": "Abu Dhabi",
@@ -154,14 +153,14 @@ EMERGENCY_NUMBERS = {
     "Dubai RTA": "8009090"
 }
 
-# ============ PAGE CONFIG ============
+# page config
 st.set_page_config(
     page_title="AIGIS - UAE Emergency Assistant",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ============ CUSTOM CSS ============
+# css and peak ui design
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -419,7 +418,7 @@ hr {
 </style>
 """, unsafe_allow_html=True)
 
-# ============ SIDEBAR ============
+#sidebar
 with st.sidebar:
     st.markdown("### AIGIS")
     st.markdown('<div class="nav-label">Configuration</div>', unsafe_allow_html=True)
@@ -468,10 +467,10 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-# ============ MAIN TABS ============
-tabs = st.tabs(["🚨 Alerts", "🗺️ Routes", "🏥 Relief", "🔍 Verify"])
+#tabs
+tabs = st.tabs(["Alerts", "Routes", "Relief", "Verify"])
 
-# ============ TAB 1: ALERTS ============
+#tab 1; aelrts
 with tabs[0]:
     st.markdown("#### Emergency Alert & Response")
     st.markdown('<div class="feature-desc" style="margin-bottom:16px;">AI-generated emergency plan based on your location, active threats, and real-time UAE news.</div>', unsafe_allow_html=True)
@@ -490,9 +489,9 @@ with tabs[0]:
     
     if st.button("Generate Emergency Plan", key="alert_btn"):
         if not groq_key:
-            st.error("⚠️ Please enter your Groq API key in the sidebar.")
+            st.error("Please enter your Groq API key in the sidebar.")
         else:
-            with st.spinner("🔄 Analyzing threats and generating plan..."):
+            with st.spinner("Analyzing threats and generating plan..."):
                 # Search for relevant news
                 news_results = search_uae_content(f"{threat_scenario} {location_emirate} emergency", max_results=4)
                 
@@ -528,9 +527,9 @@ with tabs[0]:
                     st.markdown('<div class="result-label">Emergency Plan</div>', unsafe_allow_html=True)
                     
                     if "Critical" in response or "HIGH" in response.upper():
-                        st.markdown('<div class="alert-critical">⚠️ CRITICAL THREAT - Act immediately</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="alert-critical">CRITICAL THREAT - Act immediately</div>', unsafe_allow_html=True)
                     elif "Medium" in response:
-                        st.markdown('<div class="alert-warning">⚠️ HIGH THREAT - Take action soon</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="alert-warning">HIGH THREAT - Take action soon</div>', unsafe_allow_html=True)
                     else:
                         st.markdown('<div class="alert-info">Monitor situation. Follow UAE official guidance.</div>', unsafe_allow_html=True)
                     
@@ -543,7 +542,7 @@ with tabs[0]:
                             st.markdown(f'<span class="source-chip">{n[:80]}...</span>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============ TAB 2: ROUTES ============
+# tab 2: routes
 with tabs[1]:
     st.markdown("#### Safe Route Navigator")
     st.markdown('<div class="feature-desc" style="margin-bottom:16px;">Disaster-aware routing avoiding flooded roads, sandstorms, and hazards - updated with live UAE traffic info.</div>', unsafe_allow_html=True)
@@ -562,9 +561,9 @@ with tabs[1]:
     
     if st.button("Find Safe Route", key="route_btn"):
         if not groq_key:
-            st.error("⚠️ Please enter your Groq API key in the sidebar.")
+            st.error("Please enter your Groq API key in the sidebar.")
         elif not start_loc or not end_loc:
-            st.warning("⚠️ Please enter both start and destination.")
+            st.warning(" Please enter both start and destination.")
         else:
             with st.spinner("🔄 Checking UAE road conditions..."):
                 news_results = search_uae_content(f"UAE road closure traffic {start_loc} {end_loc}", max_results=4)
@@ -603,13 +602,12 @@ with tabs[1]:
                             st.markdown(f'<span class="source-chip">{n[:80]}...</span>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                     
-                    # Metrics
                     col1, col2, col3 = st.columns(3)
                     col1.metric("Sources Checked", len(news_results))
                     col2.metric("Hazards Avoided", len(route_hazards))
                     col3.metric("Updated", datetime.now().strftime("%H:%M"))
 
-# ============ TAB 3: RELIEF ============
+#tab 3: relief
 with tabs[2]:
     st.markdown("#### Relief & Resources Finder")
     st.markdown('<div class="feature-desc" style="margin-bottom:16px;">Find verified emergency services, shelters, water points, and medical facilities near you.</div>', unsafe_allow_html=True)
@@ -623,9 +621,9 @@ with tabs[2]:
     
     if st.button("Find Relief", key="relief_btn"):
         if not groq_key:
-            st.error("⚠️ Please enter your Groq API key in the sidebar.")
+            st.error(" Please enter your Groq API key in the sidebar.")
         else:
-            with st.spinner("🔄 Searching UAE relief network..."):
+            with st.spinner("Searching UAE relief network..."):
                 news_results = search_uae_content(f"UAE {location_emirate} {resource_type} relief emergency", max_results=5)
                 
                 system = (
@@ -662,7 +660,7 @@ with tabs[2]:
                     st.markdown(response)
                     
                     st.markdown("---")
-                    st.markdown('<div class="alert-info">✅ Locations cross-referenced with UAE official sources.</div>', unsafe_allow_html=True)
+                    st.markdown('<div class="alert-info">Locations cross-referenced with UAE official sources.</div>', unsafe_allow_html=True)
                     
                     if news_results:
                         st.markdown('<div class="result-label">Sources</div>', unsafe_allow_html=True)
@@ -670,7 +668,7 @@ with tabs[2]:
                             st.markdown(f'<span class="source-chip">{n[:80]}...</span>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
 
-# ============ TAB 4: VERIFY ============
+#tab 4: verificaiton
 with tabs[3]:
     st.markdown("#### Misinformation Detection")
     st.markdown('<div class="feature-desc" style="margin-bottom:16px;">Verify disaster-related claims against UAE official sources in real time. Stop the spread of false information.</div>', unsafe_allow_html=True)
@@ -704,9 +702,9 @@ with tabs[3]:
     
     if st.button("Verify Claim", key="verify_btn"):
         if not groq_key:
-            st.error("⚠️ Please enter your Groq API key in the sidebar.")
+            st.error("Please enter your Groq API key in the sidebar.")
         elif not claim_text:
-            st.warning("⚠️ Please enter the claim to verify.")
+            st.warning("Please enter the claim to verify.")
         else:
             with st.spinner("🔄 Cross-checking with UAE official sources..."):
                 # Search for corroborating info
@@ -782,11 +780,11 @@ with tabs[3]:
                     )
                     
                     if verdict in ("FALSE", "MISLEADING"):
-                        st.markdown('<div class="alert-critical">🚫 Do NOT share this claim. It may cause panic during an emergency.</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="alert-critical">Do NOT share this claim. It may cause panic during an emergency.</div>', unsafe_allow_html=True)
                     elif verdict == "UNVERIFIED":
-                        st.markdown('<div class="alert-warning">⚠️ Cannot verify. Wait for official UAE government confirmation before acting.</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="alert-warning">Cannot verify. Wait for official UAE government confirmation before acting.</div>', unsafe_allow_html=True)
                     else:
-                        st.markdown('<div class="alert-safe">✅ Consistent with verified UAE official sources.</div>', unsafe_allow_html=True)
+                        st.markdown('<div class="alert-safe">Consistent with verified UAE official sources.</div>', unsafe_allow_html=True)
                     
                     st.markdown(response)
                     
