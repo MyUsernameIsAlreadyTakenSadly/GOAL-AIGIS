@@ -179,7 +179,7 @@ EMERGENCY_NUMBERS = {
 
 # ============ PAGE CONFIG ============
 st.set_page_config(
-    page_title="RAAJ - UAE Emergency Assistant",
+    page_title="AIGIS - UAE Emergency Assistant",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -444,7 +444,7 @@ hr {
 
 # ============ SIDEBAR ============
 with st.sidebar:
-    st.markdown("### ⚡ RAAJ")
+    st.markdown("AIGIS")
     st.markdown('<div class="nav-label">Configuration</div>', unsafe_allow_html=True)
     
     groq_key = st.text_input(
@@ -516,7 +516,7 @@ with tabs[0]:
                 
                 # System prompt
                 system = (
-                    "You are RAAJ, the UAE Emergency Response AI.\n\n"
+                    "You are AIGIS, the UAE Emergency Response AI.\n\n"
                     "Provide a CONCISE, ACTIONABLE emergency plan with these sections:\n\n"
                     "THREAT LEVEL: [Critical/High/Medium/Low] - brief justification\n"
                     "TIME FRAME: How soon action is needed\n"
@@ -580,7 +580,7 @@ with tabs[1]:
                 news_results = search_uae_content(f"UAE road closure traffic {start_loc} {end_loc}", max_results=4)
                 
                 system = (
-                    "You are RAAJ Route Navigator for UAE.\n\n"
+                    "You are AIGIS Route Navigator for UAE.\n\n"
                     "Provide safe routing advice with these sections:\n\n"
                     "RECOMMENDED ROUTE: Step-by-step using real UAE roads\n"
                     "ROADS TO AVOID: Specific roads + reason\n"
@@ -639,7 +639,7 @@ with tabs[2]:
                 news_results = search_uae_content(f"UAE {location_emirate} {resource_type} relief emergency", max_results=5)
                 
                 system = (
-                    "You are RAAJ Relief Coordinator for UAE.\n\n"
+                    "You are AIGIS Relief Coordinator for UAE.\n\n"
                     "Provide verified relief options with this format:\n\n"
                     "OPTION 1:\n"
                     "  Facility: [Real UAE name]\n"
@@ -732,7 +732,7 @@ with tabs[3]:
                 all_news = list(dict.fromkeys(all_news))[:8]
                 
                 system = (
-                    "You are RAAJ Misinformation Detection AI for UAE.\n\n"
+                    "You are AIGIS Misinformation Detection AI for UAE.\n\n"
                     "Analyze the claim and determine:\n"
                     "VERDICT: TRUE / FALSE / UNVERIFIED / MISLEADING\n\n"
                     "Format exactly:\n"
@@ -822,7 +822,7 @@ with tabs[3]:
 st.markdown("---")
 st.markdown(
     '<div style="text-align:center; font-size:0.78rem; color:#6e7681; padding:16px 0; line-height:1.8;">'
-    '<strong style="color:#8b949e;">RAAJ - UAE Emergency Assistant</strong> · '
+    '<strong style="color:#8b949e;">AIGIS - UAE Emergency Assistant</strong> · '
     'Always follow official NCEMA/Civil Defence guidance<br>'
     '<span style="color:#da3633;">Emergency:</span> '
     'Civil Defence <strong>997</strong> · '
