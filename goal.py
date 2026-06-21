@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import urllib.parse
 import time
+import base64
 from bs4 import BeautifulSoup
 import re
 from groq import Groq
@@ -415,9 +416,219 @@ hr {
     margin-top: 4px;
 }
 
+.title-shell {
+    min-height: 100vh;
+    margin: -1rem;
+    padding: 44px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 18% 24%, rgba(88, 166, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 72%, rgba(210, 153, 34, 0.14), transparent 30%),
+        linear-gradient(135deg, #06101a 0%, #0d1117 52%, #121826 100%);
+    position: relative;
+}
+
+.title-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(88, 166, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 166, 255, 0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+    opacity: 0.65;
+}
+
+.title-frame {
+    width: min(1080px, 94vw);
+    min-height: 620px;
+    border: 1px solid rgba(139, 148, 158, 0.55);
+    box-shadow: 0 0 0 8px rgba(13, 17, 23, 0.72), 0 28px 80px rgba(0, 0, 0, 0.48);
+    background: linear-gradient(180deg, rgba(6, 16, 26, 0.94), rgba(10, 19, 31, 0.97));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    isolation: isolate;
+}
+
+.title-frame::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(88, 166, 255, 0.18);
+    pointer-events: none;
+}
+
+.title-content {
+    width: min(820px, 88%);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.brand-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.brand-image {
+    width: min(310px, 64vw);
+    filter: drop-shadow(0 12px 28px rgba(88, 166, 255, 0.22));
+}
+
+.brand-mark {
+    width: 178px;
+    height: 178px;
+    margin: 0 auto 22px auto;
+    display: grid;
+    place-items: center;
+    color: #d8bd77;
+    font-size: 86px;
+    font-weight: 700;
+    border: 1px solid rgba(216, 189, 119, 0.5);
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.16), rgba(216, 189, 119, 0.12));
+    box-shadow: inset 0 0 40px rgba(88, 166, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.title-name {
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 800;
+    color: #f0f6fc;
+    line-height: 1;
+    margin-bottom: 12px;
+}
+
+.title-name span {
+    color: #d8bd77;
+}
+
+.title-tagline {
+    color: #d8bd77;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(23px, 3vw, 34px);
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.title-subcopy {
+    color: #8b949e;
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto 34px auto;
+}
+
+.title-loading {
+    width: min(320px, 66vw);
+    height: 12px;
+    border: 1px solid #30363d;
+    margin: 0 auto 10px auto;
+    overflow: hidden;
+    background: rgba(13, 17, 23, 0.88);
+}
+
+.title-loading span {
+    display: block;
+    width: 72%;
+    height: 100%;
+    background: linear-gradient(90deg, #58a6ff, #d8bd77);
+}
+
+.title-load-text {
+    color: #6e7681;
+    font-size: 12px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+}
+
+.title-actions {
+    max-width: 260px;
+    margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+    .title-shell {
+        padding: 20px 12px;
+    }
+
+    .title-frame {
+        min-height: 92vh;
+    }
+
+    .brand-mark {
+        width: 132px;
+        height: 132px;
+        font-size: 64px;
+    }
+
+    .title-subcopy {
+        font-size: 14px;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
+def render_title_screen() -> None:
+    image_path = r"C:\Users\anvin\Downloads\Gemini_Generated_Image_h7m4ijh7m4ijh7m4.png"
+    image_html = ""
+
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+        image_html = f'<img class="brand-image" src="data:image/png;base64,{encoded_image}" alt="AEGIS AI title artwork">'
+    else:
+        image_html = '<div class="brand-mark">A</div>'
+
+    st.markdown(
+        f"""
+        <div class="title-shell">
+            <div class="title-frame">
+                <div class="title-content">
+                    <div class="brand-row">{image_html}</div>
+                    <div class="title-name">AEGIS <span>AI</span></div>
+                    <div class="title-tagline">Predict. Protect. Recover. Eradicate Poverty.</div>
+                    <div class="title-subcopy">
+                        UAE emergency intelligence for alerts, safe routes, relief resources,
+                        and misinformation checks.
+                    </div>
+                    <div class="title-loading"><span></span></div>
+                    <div class="title-load-text">System ready</div>
+                    <div class="title-actions">
+        """,
+        unsafe_allow_html=True
+    )
+
+    if st.button("Enter AIGIS AI", key="enter_aigis", use_container_width=True):
+        st.session_state["show_main_app"] = True
+        st.rerun()
+
+    st.markdown(
+        """
+                    </div>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+if "show_main_app" not in st.session_state:
+    st.session_state["show_main_app"] = False
+
+if not st.session_state["show_main_app"]:
+    render_title_screen()
+    st.stop()
 #sidebar
 with st.sidebar:
     st.markdown("### AIGIS")
@@ -461,9 +672,9 @@ with st.sidebar:
     st.markdown("""
     <div style="font-size:0.72rem; color:#6e7681; line-height:1.8;">
     <strong style="color:#8b949e;">Data Sources:</strong><br>
-    NCEMA · NCM · WAM · MOHAP · RTA<br>
+    NCEMA Â· NCM Â· WAM Â· MOHAP Â· RTA<br>
     <strong style="color:#8b949e;">Emergency Numbers:</strong><br>
-    Police: 999 · Ambulance: 998 · Civil Defence: 997
+    Police: 999 Â· Ambulance: 998 Â· Civil Defence: 997
     </div>
     """, unsafe_allow_html=True)
 
@@ -479,7 +690,7 @@ with tabs[0]:
     with col1:
         threat_scenario = st.selectbox(
             "Scenario Type",
-            ["Flash Flood Warning", "Sandstorm", "Extreme Heat (>48°C)", "Wildfire", "Storm Surge", "Infrastructure Failure", "Custom"]
+            ["Flash Flood Warning", "Sandstorm", "Extreme Heat (>48Â°C)", "Wildfire", "Storm Surge", "Infrastructure Failure", "Custom"]
         )
         additional_info = st.text_area(
             "Additional details (optional)",
@@ -512,7 +723,7 @@ with tabs[0]:
                     "IMMEDIATE ACTIONS: 3-5 specific numbered steps\n"
                     "SAFE ROUTES: Which roads to use/avoid in UAE\n"
                     "SHELTERS: Nearest facility + capacity\n"
-                    "EMERGENCY CONTACTS: Police 999 · Ambulance 998 · Civil Defence 997\n"
+                    "EMERGENCY CONTACTS: Police 999 Â· Ambulance 998 Â· Civil Defence 997\n"
                     "CRITICAL TIP: One UAE-specific survival tip\n\n"
                     "Use real UAE roads (E11, E311, etc.) and landmarks. Be specific to the emirate."
                 )
@@ -565,7 +776,7 @@ with tabs[1]:
         elif not start_loc or not end_loc:
             st.warning(" Please enter both start and destination.")
         else:
-            with st.spinner("🔄 Checking UAE road conditions..."):
+            with st.spinner("ðŸ”„ Checking UAE road conditions..."):
                 news_results = search_uae_content(f"UAE road closure traffic {start_loc} {end_loc}", max_results=4)
                 
                 system = (
@@ -706,7 +917,7 @@ with tabs[3]:
         elif not claim_text:
             st.warning("Please enter the claim to verify.")
         else:
-            with st.spinner("🔄 Cross-checking with UAE official sources..."):
+            with st.spinner("ðŸ”„ Cross-checking with UAE official sources..."):
                 # Search for corroborating info
                 search_queries = [
                     f"UAE official {claim_text[:50]}",
@@ -732,7 +943,7 @@ with tabs[3]:
                     "VERIFIED INFO: [What is actually confirmed]\n\n"
                     "ADVICE: [What to do - act, ignore, or verify further]\n\n"
                     "UAE OFFICIAL VERIFICATION CHANNELS:\n"
-                    "WAM: wam.ae · NCM: ncm.ae · NCEMA: ncema.gov.ae · MOHAP: mohap.gov.ae"
+                    "WAM: wam.ae Â· NCM: ncm.ae Â· NCEMA: ncema.gov.ae Â· MOHAP: mohap.gov.ae"
                 )
                 
                 news_ctx = "\n".join([f"- {n}" for n in all_news]) if all_news else "No corroborating sources found."
@@ -763,10 +974,10 @@ with tabs[3]:
                     }.get(verdict, "verdict-unverified")
                     
                     verdict_icons = {
-                        "TRUE": "✅",
-                        "FALSE": "❌",
-                        "UNVERIFIED": "⚠️",
-                        "MISLEADING": "⚠️"
+                        "TRUE": "âœ…",
+                        "FALSE": "âŒ",
+                        "UNVERIFIED": "âš ï¸",
+                        "MISLEADING": "âš ï¸"
                     }
                     
                     st.markdown('<div class="result-panel">', unsafe_allow_html=True)
@@ -774,7 +985,7 @@ with tabs[3]:
                     
                     st.markdown(
                         f'<div style="margin:12px 0;font-size:16px;">'
-                        f'<span class="{verdict_class}">{verdict_icons.get(verdict, "❓")} {verdict}</span>'
+                        f'<span class="{verdict_class}">{verdict_icons.get(verdict, "â“")} {verdict}</span>'
                         f'</div>',
                         unsafe_allow_html=True
                     )
@@ -798,8 +1009,8 @@ with tabs[3]:
                     st.markdown(
                         '<div style="font-size:0.75rem; color:#6e7681; line-height:1.8;">'
                         '<strong style="color:#8b949e;">UAE Official Verification:</strong><br>'
-                        '<a href="https://wam.ae" style="color:#58a6ff;">wam.ae</a> · '
-                        '<a href="https://ncm.ae" style="color:#58a6ff;">ncm.ae</a> · '
+                        '<a href="https://wam.ae" style="color:#58a6ff;">wam.ae</a> Â· '
+                        '<a href="https://ncm.ae" style="color:#58a6ff;">ncm.ae</a> Â· '
                         '<a href="https://ncema.gov.ae" style="color:#58a6ff;">ncema.gov.ae</a>'
                         '</div>',
                         unsafe_allow_html=True
@@ -810,11 +1021,11 @@ with tabs[3]:
 st.markdown("---")
 st.markdown(
     '<div style="text-align:center; font-size:0.78rem; color:#6e7681; padding:16px 0; line-height:1.8;">'
-    '<strong style="color:#8b949e;">AIGIS - UAE Emergency Assistant</strong> · '
+    '<strong style="color:#8b949e;">AIGIS - UAE Emergency Assistant</strong> Â· '
     'Always follow official NCEMA/Civil Defence guidance<br>'
     '<span style="color:#da3633;">Emergency:</span> '
-    'Civil Defence <strong>997</strong> · '
-    'Police <strong>999</strong> · '
+    'Civil Defence <strong>997</strong> Â· '
+    'Police <strong>999</strong> Â· '
     'Ambulance <strong>998</strong>'
     '</div>',
     unsafe_allow_html=True
