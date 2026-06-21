@@ -7,10 +7,10 @@ import urllib.parse
 import time
 from bs4 import BeautifulSoup
 import re
-from groq import Groq  # Add this import
+from groq import Groq
 
 # ============ AI CONFIGURATION ============
-def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: str = "mixtral-8x7b-32768") -> str | None:
+def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: str = "openai/gpt-oss-120b") -> str | None:
     """Get response from Groq API using the official SDK"""
     if not api_key or not api_key.startswith("gsk_"):
         st.error("Invalid Groq API key. Please enter a valid key starting with 'gsk_'")
@@ -431,6 +431,19 @@ with st.sidebar:
         help="Get your key at console.groq.com"
     )
     
+    st.markdown('<div class="nav-label">Model Selection</div>', unsafe_allow_html=True)
+    model_choice = st.selectbox(
+        "AI Model",
+        [
+            "openai/gpt-oss-120b",
+            "llama-3.3-70b-versatile",
+            "qwen/qwen3.6-27b",
+            "llama-3.1-8b-instant"
+        ],
+        index=0,
+        help="Select which AI model to use. GPT-OSS 120B is recommended for best performance."
+    )
+    
     st.markdown('<div class="nav-label">Your Location</div>', unsafe_allow_html=True)
     location_emirate = st.selectbox(
         "Emirate",
@@ -508,7 +521,7 @@ with tabs[0]:
                 news_context = "\n".join([f"- {n}" for n in news_results]) if news_results else "No recent news found."
                 prompt = f"{context}\n\nLive news context:\n{news_context}"
                 
-                response = get_ai_response(groq_key, system, prompt)
+                response = get_ai_response(groq_key, system, prompt, model_choice)
                 
                 if response:
                     st.markdown('<div class="result-panel">', unsafe_allow_html=True)
@@ -576,7 +589,7 @@ with tabs[1]:
                     f"Emirate: {location_emirate}\n\nLive traffic news:\n{news_ctx}"
                 )
                 
-                response = get_ai_response(groq_key, system, prompt)
+                response = get_ai_response(groq_key, system, prompt, model_choice)
                 
                 if response:
                     st.markdown('<div class="result-panel">', unsafe_allow_html=True)
@@ -641,7 +654,7 @@ with tabs[2]:
                     f"People: {people_count}\n\nLive context:\n{news_ctx}"
                 )
                 
-                response = get_ai_response(groq_key, system, prompt)
+                response = get_ai_response(groq_key, system, prompt, model_choice)
                 
                 if response:
                     st.markdown('<div class="result-panel">', unsafe_allow_html=True)
@@ -732,7 +745,7 @@ with tabs[3]:
                     f"Search results:\n{news_ctx}"
                 )
                 
-                response = get_ai_response(groq_key, system, prompt)
+                response = get_ai_response(groq_key, system, prompt, model_choice)
                 
                 if response:
                     verdict = "UNVERIFIED"
