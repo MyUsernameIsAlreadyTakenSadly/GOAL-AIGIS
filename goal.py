@@ -11,6 +11,10 @@ import re
 # ============ AI CONFIGURATION ============
 def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: str = "mixtral-8x7b-32768") -> str | None:
     """Get response from Groq API with retry logic"""
+    if not api_key or not api_key.startswith("gsk_"):
+        st.error("Invalid Groq API key. Please enter a valid key starting with 'gsk_'")
+        return None
+    
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
@@ -55,6 +59,9 @@ def get_ai_response(api_key: str, system_prompt: str, user_prompt: str, model: s
             else:
                 st.error(f"API error: {e}")
                 return None
+        except requests.exceptions.Timeout:
+            st.error("Request timed out. Please try again.")
+            return None
         except Exception as e:
             st.error(f"Connection error: {e}")
             return None
@@ -100,7 +107,7 @@ def search_uae_content(query: str, max_results: int = 6) -> list[str]:
             if len(results) >= max_results:
                 break
         return results
-    except Exception:
+    except Exception as e:
         return []
 
 # ============ UAE DATA ============
@@ -196,7 +203,7 @@ st.markdown("""
     padding: 0;
     box-sizing: border-box;
     border-radius: 0 !important;
-  }
+}
   
 * {
     margin: 0;
@@ -444,14 +451,14 @@ hr {
 
 # ============ SIDEBAR ============
 with st.sidebar:
-    st.markdown("AIGIS")
+    st.markdown("### AIGIS")
     st.markdown('<div class="nav-label">Configuration</div>', unsafe_allow_html=True)
     
     groq_key = st.text_input(
         "Groq API Key",
         type="password",
         placeholder="gsk-...",
-        help="Required for AI-powered features"
+        help="Get your key at console.groq.com"
     )
     
     st.markdown('<div class="nav-label">Your Location</div>', unsafe_allow_html=True)
@@ -500,9 +507,9 @@ with tabs[0]:
     
     if st.button("Generate Emergency Plan", key="alert_btn"):
         if not groq_key:
-            st.error("Please enter your Groq API key in the sidebar.")
+            st.error("⚠️ Please enter your Groq API key in the sidebar.")
         else:
-            with st.spinner("Analyzing threats and generating plan..."):
+            with st.spinner("🔄 Analyzing threats and generating plan..."):
                 # Search for relevant news
                 news_results = search_uae_content(f"{threat_scenario} {location_emirate} emergency", max_results=4)
                 
@@ -572,11 +579,11 @@ with tabs[1]:
     
     if st.button("Find Safe Route", key="route_btn"):
         if not groq_key:
-            st.error("Please enter your Groq API key in the sidebar.")
+            st.error("⚠️ Please enter your Groq API key in the sidebar.")
         elif not start_loc or not end_loc:
-            st.warning("Please enter both start and destination.")
+            st.warning("⚠️ Please enter both start and destination.")
         else:
-            with st.spinner("Checking UAE road conditions..."):
+            with st.spinner("🔄 Checking UAE road conditions..."):
                 news_results = search_uae_content(f"UAE road closure traffic {start_loc} {end_loc}", max_results=4)
                 
                 system = (
@@ -633,9 +640,9 @@ with tabs[2]:
     
     if st.button("Find Relief", key="relief_btn"):
         if not groq_key:
-            st.error("Please enter your Groq API key in the sidebar.")
+            st.error("⚠️ Please enter your Groq API key in the sidebar.")
         else:
-            with st.spinner("Searching UAE relief network..."):
+            with st.spinner("🔄 Searching UAE relief network..."):
                 news_results = search_uae_content(f"UAE {location_emirate} {resource_type} relief emergency", max_results=5)
                 
                 system = (
@@ -714,11 +721,11 @@ with tabs[3]:
     
     if st.button("Verify Claim", key="verify_btn"):
         if not groq_key:
-            st.error("Please enter your Groq API key in the sidebar.")
+            st.error("⚠️ Please enter your Groq API key in the sidebar.")
         elif not claim_text:
-            st.warning("Please enter the claim to verify.")
+            st.warning("⚠️ Please enter the claim to verify.")
         else:
-            with st.spinner("Cross-checking with UAE official sources..."):
+            with st.spinner("🔄 Cross-checking with UAE official sources..."):
                 # Search for corroborating info
                 search_queries = [
                     f"UAE official {claim_text[:50]}",
