@@ -95,8 +95,8 @@ EMIRATES = {
             {"name": "Khalifa University Hall", "capacity": 1200, "status": "At 70%"}
         ]
     },
-    "Dubai": {
-        "capital": "Dubai",
+    "Dub": {
+        "capital": "Dub",
         "emergency": {"Police": "999", "Ambulance": "998", "Civil Defence": "997"},
         "hospitals": [
             {"name": "Rashid Hospital", "type": "Major Trauma", "24h": True},
@@ -573,9 +573,7 @@ with tabs[1]:
                     "Provide safe routing advice with these sections:\n\n"
                     "RECOMMENDED ROUTE: Step-by-step using real UAE roads\n"
                     "ROADS TO AVOID: Specific roads + reason\n"
-                    "ESTIMATED TIME: Normal vs current conditions\n"
                     "ALTERNATE ROUTE: Backup option\n"
-                    "CONDITIONS: What to expect\n"
                     "DRIVER TIP: Critical UAE-specific advice\n\n"
                     "Use real UAE road names (E11, E311, D89, etc.)."
                 )
@@ -706,7 +704,7 @@ with tabs[3]:
         elif not claim_text:
             st.warning("Please enter the claim to verify.")
         else:
-            with st.spinner("🔄 Cross-checking with UAE official sources..."):
+            with st.spinner("Cross-checking with UAE official sources..."):
                 # Search for corroborating info
                 search_queries = [
                     f"UAE official {claim_text[:50]}",
