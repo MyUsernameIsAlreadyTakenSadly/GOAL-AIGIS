@@ -95,8 +95,8 @@ EMIRATES = {
             {"name": "Khalifa University Hall", "capacity": 1200, "status": "At 70%"}
         ]
     },
-    "Dub": {
-        "capital": "Dub",
+    "Dubai": {
+        "capital": "Dubai",
         "emergency": {"Police": "999", "Ambulance": "998", "Civil Defence": "997"},
         "hospitals": [
             {"name": "Rashid Hospital", "type": "Major Trauma", "24h": True},
